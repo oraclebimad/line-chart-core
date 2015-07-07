@@ -155,7 +155,7 @@
   LineChart.prototype.getColor = function (scale, color) {
     var max = this[scale].max;
     var fraction = color > 0 ? color / max : 0;
-    var colorStr = this[scale](color);
+    var colorStr = this[scale](fraction);
     return colorStr;
   };
 
