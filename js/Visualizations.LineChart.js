@@ -178,9 +178,14 @@
     var isSelected;
     var container = d3.select(line.parentNode);
     line = d3.select(line);
-    isSelected = line.classed('selected', !line.classed('selected')).classed('selected');
     data = line.node().__data__;
-    container.classed('has-selected', container.selectAll('.selected').size() > 0);
+    isSelected = line.classed({
+      'selected': !line.classed('selected'),
+    }).classed('selected');
+    container.classed({
+      'has-children': LineChart.hasChildren(data),
+      'has-selected': container.selectAll('.selected').size() > 0
+    });
     if (isSelected) {
       container.transition().duration(350).tween('scroll', scrollTween(0));
       this.addFilter(data).renderChildren(data);
