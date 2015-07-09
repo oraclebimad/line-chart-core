@@ -92,6 +92,8 @@
 
     this.filters = {};
 
+    this.legends = this.container.append('div').attr('class', 'line-chart-legends');
+
     this.barContainer = this.container.append('div');
 
     this.barContainer.attr({
