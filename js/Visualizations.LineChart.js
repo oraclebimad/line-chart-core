@@ -303,6 +303,22 @@
     return this;
   };
 
+  LineChart.prototype.renderLegends = function () {
+    if (this.legends.select('div.text-wrapper').size() || !this.options.colorLegend)
+      return this;
+    var legends = [];
+    var lower = this.colorScale(this.options.threshold - 1);
+    var upper = this.colorScale(this.options.threshold + 1);
+    legends.push(this.options.colorLegend + ': ');
+    legends.push('<span class="legend" style="background-color:' + lower + '"></span>');
+    legends.push('&lt; ' + this.options.numericFormat(this.options.threshold));
+    legends.push('<span class="legend" style="background-color:' + upper + '"></span>');
+    this.legends.append('div').attr({
+      'class': 'text-wrapper'
+    }).node().innerHTML = legends.join('');
+    return this;
+  };
+
   LineChart.prototype.removeChildren = function (parent) {
     var children = [];
     var next = parent.nextSibling;
