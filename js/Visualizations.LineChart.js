@@ -5,6 +5,8 @@
   /* global ColorScale */
   'use strict';
 
+  var arrayMap = Array.prototype.map;
+
   function calculateDepth (data, depth) {
     if (Utils.isArray(data) && Utils.isObject(data[0])) {
       depth++;
@@ -177,21 +179,27 @@
     var data;
     var isSelected;
     var container = d3.select(line.parentNode);
+    var hasChildren;
     line = d3.select(line);
     data = line.node().__data__;
+    hasChildren = LineChart.hasChildren(data);
     isSelected = line.classed({
       'selected': !line.classed('selected'),
     }).classed('selected');
     container.classed({
-      'has-children': LineChart.hasChildren(data),
+      'has-children': hasChildren,
       'has-selected': container.selectAll('.selected').size() > 0
     });
     if (isSelected) {
-      container.transition().duration(350).tween('scroll', scrollTween(0));
       this.addFilter(data).renderChildren(data);
     } else {
-      this.removeChildren(container.node());
+      //remove current filter
+      this.removeFilter(data).removeChildren(container.node());
     }
+
+    //Only do the transition if the level has children
+    if (hasChildren && isSelected)
+      container.transition().duration(350).tween('scroll', scrollTween(0));
   };
 
   LineChart.prototype.getBarHeight = function () {
@@ -300,18 +308,24 @@
     var next = parent.nextSibling;
     var self = this;
     var promises = [];
+    var filters = [];
+    var removeFilter = Utils.proxy(this.removeFilter, this);
     var master;
     while (next) {
       children.unshift(next);
       next = next.nextSibling;
     }
     children.forEach(function (node) {
+      var selected = node.querySelectorAll('.selected');
       promises.push(self.closeLevel(node));
+      filters = arrayMap.call(selected, function (line) { return line.__data__; });
     });
     master = jQuery.when.apply(null, promises);
     master.done(function () {
-      d3.select(parent).classed('has-selected', false).selectAll('.line-container.selected').classed('selected', false);
-      self.clearFilters();
+      //d3.select(parent).classed('has-selected', false).selectAll('.line-container.selected').classed('selected', false);
+      //if we closed a level remove all filters of that level
+      if (filters.length)
+        filters.forEach(removeFilter);
     });
     return master;
   };
@@ -347,10 +361,14 @@
 
   LineChart.prototype.addFilter = function (group) {
     var uid = this.generateUID(group.key);
-    if (!(uid in this.filters))
-      this.filters[uid] = {name: group.key};
+    var filterData;
+    if (!(uid in this.filters)) {
+      filterData = {name: group.key};
+      this.filters[uid] = filterData;
+      this.trigger('filter', [[filterData]]);
+    }
 
-    this.trigger('filter', [this.filters]);
+    //only send the last one
     return this;
   };
 
@@ -381,18 +399,19 @@
     filters = [this.filters[uid]];
     delete this.filters[uid];
 
+    console.log(filters);
     this.trigger('remove-filter', [filters]);
     return this;
   };
 
   LineChart.prototype.clearFilters = function () {
-    var filters = [];
+    var filtersToRemove = [];
     var key;
     for (key in this.filters) {
-      filters.push(this.filters[key]);
+      filtersToRemove.push(this.filters[key]);
     }
     this.filters = {};
-    this.trigger('remove-filter', [filters]);
+    this.trigger('remove-filter', [filtersToRemove]);
     return this;
   };
 
