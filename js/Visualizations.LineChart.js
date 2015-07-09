@@ -417,7 +417,6 @@
     filters = [this.filters[uid]];
     delete this.filters[uid];
 
-    console.log(filters);
     this.trigger('remove-filter', [filters]);
     return this;
   };
