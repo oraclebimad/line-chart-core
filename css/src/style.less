@@ -36,6 +36,7 @@
 .line-chart-plugin {
 
   font-family: "Helvetica Neue", Helvetica, SansSerif;
+  text-shadow: none;
   position: relative;
   overflow: auto;
   .line-chart {
@@ -235,6 +236,27 @@
      -ms-transition-duration: 0s;
      -o-transition-duration: 0s;
      transition-duration: 0s;
+   }
+
+   .text-wrapper {
+     text-align: center;
+     vertical-align: middle;
+     width: 100%;
+     height: 15px;
+     padding: 10px 0;
+     font-size: 13px;
+     line-height: 17px;
+     font-weight: 300;
+     text-transform: capitalize;
+     color: #a6a9a8;
+     .legend {
+       display: inline-block;
+       width: 10px;
+       height: 10px;
+       margin: 0 5px;
+       vertical-align: middle;
+       margin-bottom: 3px;
+     }
    }
 }
 .hide {
