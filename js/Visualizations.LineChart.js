@@ -136,7 +136,10 @@
   LineChart.prototype.setColors = function (colors) {
     this.colorScale = d3.scale.threshold();
     this.colorScale.range(colors);
-    this.setColorDomain();
+    if (isNaN(this.options.threshold))
+      this.setColorDomain();
+    else
+      this.colorScale.domain([this.options.threshold]);
     return this;
   };
 
@@ -152,15 +155,19 @@
   };
 
   LineChart.prototype.adjustColorDomain = function (data) {
-    this.colorScale.max = d3.max(Utils.pluck(data, this.options.colorProperty));
+    if (isNaN(this.options.threshold))
+      this.colorScale.max = d3.max(Utils.pluck(data, this.options.colorProperty));
     return this;
   };
 
   LineChart.prototype.getColor = function (scale, color) {
-    var max = this[scale].max;
-    var fraction = color > 0 ? color / max : 0;
-    var colorStr = this[scale](fraction);
-    return colorStr;
+    var max;
+    var fraction = color;
+    if (isNaN(this.options.threshold)) {
+      max = this[scale].max;
+      fraction = color > 0 ? color / max : 0;
+    }
+    return this[scale](fraction);
   };
 
   LineChart.prototype.animate = function (animate) {
@@ -313,7 +320,7 @@
     var upper = this.colorScale(this.options.threshold + 1);
     legends.push(this.options.colorLegend + ': ');
     legends.push('<span class="legend" style="background-color:' + lower + '"></span>');
-    legends.push('&lt; ' + this.options.numericFormat(this.options.threshold));
+    legends.push('&lt; ' + this.options.threshold + ' &lt;');
     legends.push('<span class="legend" style="background-color:' + upper + '"></span>');
     this.legends.append('div').attr({
       'class': 'text-wrapper'
