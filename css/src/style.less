@@ -249,13 +249,27 @@
      font-weight: 300;
      text-transform: capitalize;
      color: #a6a9a8;
+
      .legend {
        display: inline-block;
-       width: 10px;
-       height: 10px;
        margin: 0 5px;
        vertical-align: middle;
        margin-bottom: 3px;
+
+       &.color {
+         width: 10px;
+         height: 10px;
+       }
+
+       &.size {
+         width: 20px;
+         height: 3px;
+         background-color: #a6a9a8;
+       }
+     }
+
+     .legend-spacer {
+       margin-right: 10px;
      }
    }
 }

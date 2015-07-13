@@ -313,15 +313,23 @@
   };
 
   LineChart.prototype.renderLegends = function () {
-    if (this.legends.select('div.text-wrapper').size() || !this.options.colorLegend)
+    if (this.legends.select('div.text-wrapper').size())
       return this;
     var legends = [];
-    var lower = this.colorScale(this.options.threshold - 1);
-    var upper = this.colorScale(this.options.threshold + 1);
-    legends.push(this.options.colorLegend + ': ');
-    legends.push('<span class="legend" style="background-color:' + lower + '"></span>');
-    legends.push('&lt; ' + this.options.threshold + ' &lt;');
-    legends.push('<span class="legend" style="background-color:' + upper + '"></span>');
+    var upper;
+    var lower;
+    if (this.options.colorLegend) {
+      lower = this.colorScale(this.options.threshold - 1);
+      upper = this.colorScale(this.options.threshold + 1);
+      legends.push('<span class="legend-text">' + Utils.capitalize(this.options.colorLegend) + ': </span>');
+      legends.push('<span class="legend color" style="background-color:' + lower + '"></span>');
+      legends.push('&lt; ' + this.options.threshold + ' &lt;');
+      legends.push('<span class="legend color legend-spacer" style="background-color:' + upper + '"></span>');
+    }
+
+    legends.push('<span class="legend-text">' + Utils.capitalize(this.options.sizeLegend) + ': </span>');
+    legends.push('<span class="legend size"></span>');
+
     this.legends.append('div').attr({
       'class': 'text-wrapper'
     }).node().innerHTML = legends.join('');
