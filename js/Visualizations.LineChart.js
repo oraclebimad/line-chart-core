@@ -8,9 +8,9 @@
   var arrayMap = Array.prototype.map;
 
   function calculateDepth (data, depth) {
-    if (Utils.isArray(data) && Utils.isObject(data[0])) {
+    if (bimad.utils.isArray(data) && bimad.utils.isObject(data[0])) {
       depth++;
-      if (Utils.isArray(data[0].values)) depth = calculateDepth(data[0].values, depth);
+      if (bimad.utils.isArray(data[0].values)) depth = calculateDepth(data[0].values, depth);
     }
     return depth;
   }
@@ -23,7 +23,7 @@
   }
 
   function sortData (data) {
-    if (!Utils.isArray(data.values))
+    if (!bimad.utils.isArray(data.values))
       return false;
 
     data.values.sort(function (a, b) {
@@ -59,7 +59,7 @@
   };
 
   LineChart.hasChildren = function (data) {
-    return data.values && Utils.isArray(data.values);
+    return data.values && bimad.utils.isArray(data.values);
   };
 
   LineChart.DEFAULTS = {
@@ -176,7 +176,7 @@
 
   LineChart.prototype.adjustColorDomain = function (data) {
     if (isNaN(this.options.threshold))
-      this.colorScale.max = d3.max(Utils.pluck(data, this.options.colorProperty));
+      this.colorScale.max = d3.max(bimad.utils.pluck(data, this.options.colorProperty));
     return this;
   };
 
@@ -190,7 +190,7 @@
   };
 
   LineChart.prototype.adjustScale = function (data) {
-    this.scale.domain([0, d3.max(Utils.pluck(data, 'size'))]);
+    this.scale.domain([0, d3.max(bimad.utils.pluck(data, 'size'))]);
     return this;
   };
 
@@ -331,13 +331,13 @@
     if (this.options.colorLegend) {
       lower = this.colorScale(this.options.threshold - 1);
       upper = this.colorScale(this.options.threshold + 1);
-      legends.push('<span class="legend-text">' + Utils.capitalize(this.options.colorLegend) + ': </span>');
+      legends.push('<span class="legend-text">' + bimad.utils.capitalize(this.options.colorLegend) + ': </span>');
       legends.push('<span class="legend color" style="background-color:' + lower + '"></span>');
       legends.push('&lt; ' + this.options.threshold + ' &lt;');
       legends.push('<span class="legend color legend-spacer" style="background-color:' + upper + '"></span>');
     }
 
-    legends.push('<span class="legend-text">' + Utils.capitalize(this.options.sizeLegend) + ': </span>');
+    legends.push('<span class="legend-text">' + bimad.utils.capitalize(this.options.sizeLegend) + ': </span>');
     legends.push('<span class="legend size"></span>');
 
     this.legends.append('div').attr({
@@ -352,7 +352,7 @@
     var self = this;
     var promises = [];
     var filters = [];
-    var removeFilter = Utils.proxy(this.removeFilter, this);
+    var removeFilter = bimad.utils.proxy(this.removeFilter, this);
     var master;
     while (next) {
       children.unshift(next);
@@ -375,7 +375,7 @@
 
   LineChart.prototype.closeLevel = function (container) {
     container = d3.select(container);
-    var deferred = Utils.deferred();
+    var deferred = bimad.utils.deferred();
     if (!container.classed('line-chart')) {
       return deferred.resolveWith(this).promise();
     }
@@ -416,7 +416,7 @@
   };
 
   LineChart.prototype.updateFilterInfo = function (filters) {
-    if (!Utils.isArray(filters))
+    if (!bimad.utils.isArray(filters))
       return this;
 
     var self = this;
